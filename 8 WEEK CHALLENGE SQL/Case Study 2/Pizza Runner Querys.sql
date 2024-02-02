@@ -14,65 +14,64 @@ from customer_orders;
 
 -- 2.How many unique customer orders were made?
 
-select count(distinct(order_id) ) as total_unique_cust_orders
+select count(distinct(customer_id))
 from customer_orders;
 
 
 -- 3.How many successful orders were delivered by each runner?
-select count(runner_id)
-from runner_orders
-where cancellation is NULL
+
+select runner_id, count(c.order_id) as delivered_orders
+from customer_orders as c
+	inner join runner_orders as ro
+    on c.order_id = ro.order_id
+where cancellation is null
 group by runner_id;
 
-
 -- 4.How many of each type of pizza was delivered?
-select pn.pizza_name,count(pn.pizza_name)
-from customer_orders as co
-left join runner_orders as ro
-	on ro.order_id = co.order_id
-left join pizza_names as pn
-	on pn.pizza_id = co.pizza_id
+
+select pizza_name, count(pizza_name) as pizza_type_delivery
+from customer_orders as c
+	left join pizza_names as p
+    on c.pizza_id = p.pizza_id
+    left join runner_orders as r
+    on c.order_id = r.order_id
 where cancellation is null
-group by pn.pizza_name;
+group by pizza_name;
+
 
 -- 5.How many Vegetarian and Meatlovers were ordered by each customer?
 
-select co.customer_id,count(co.customer_id) as cantidad_pizzas, pizza_name
-from customer_orders as co
-left join pizza_names as pn
-	on pn.pizza_id = co.pizza_id
-group by co.customer_id, pizza_name
+select customer_id, pizza_name,count(pizza_name) as pizzas_por_cliente
+from customer_orders as c
+	left join pizza_names as p
+    on c.pizza_id  = p.pizza_id
+group by customer_id, pizza_name
 order by customer_id;
-
 
 
 
 -- 6.What was the maximum number of pizzas delivered in a single order?
 
-select count(co.order_id) as max_number_pizzas_delivered
-from customer_orders as co
-left join runner_orders as ro
-	on co.order_id = ro.order_id
+select r.order_id, count(p.pizza_id) as number_of_pizza_per_order
+from customer_orders as c
+	left join pizza_names as p
+    on c.pizza_id = p.pizza_id
+    left join runner_orders as r
+    on c.order_id = r.order_id
 where cancellation is null
-group by co.order_id
-order by max_number_pizzas_delivered desc
+group by r.order_id
+order by number_of_pizza_per_order desc
 limit 1;
 
 
-
 -- 7.For each customer, how many delivered pizzas had at least 1 change and how many had no changes?
-select customer_id
-from (
-select *,
-	case
-    when exclusions != '' or extras != '' then 'pizza_con_cambios'
-    when exclusions = '' and extras = '' then 'pizza_sin_cambios'
-    end as pizzas_modificadas
-from customer_orders as co
-left join runner_orders as ro
-	on ro.order_id = co.order_id
-where cancellation is null) as maeastro;
 
+select customer_id, count(*) as changes
+from customer_orders
+where exclusions != '' or extras != ''
+group by customer_id;
+
+case when
 
 
 -- 8.How many pizzas were delivered that had both exclusions and extras?
