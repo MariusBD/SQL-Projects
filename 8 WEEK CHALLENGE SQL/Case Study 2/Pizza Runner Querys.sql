@@ -71,13 +71,32 @@ from customer_orders
 where exclusions != '' or extras != ''
 group by customer_id;
 
-case when
-
+use pizza_runner;
 
 -- 8.How many pizzas were delivered that had both exclusions and extras?
--- 9.What was the total volume of pizzas ordered for each hour of the day?
--- 10.What was the volume of orders for each day of the week?
 
+select count(co.order_id)
+from customer_orders as co
+inner join runner_orders as ro
+	on ro.order_id = co.order_id
+where exclusions !='' and extras !='';
+    
+
+
+-- 9.What was the total volume of pizzas ordered for each hour of the day?
+select hour_order,count(order_id) as number_of_orders
+from 
+		(select order_id,customer_id,hour(order_time) as hour_order
+		from customer_orders) as hour_table
+group by hour_order;
+
+
+-- 10.What was the volume of orders for each day of the week?
+select week_order,count(order_id) as number_of_orders
+from 
+		(select *,dayofweek(order_time) as week_order
+		from customer_orders) as week_table
+group by week_order;
 
 -- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -85,8 +104,36 @@ case when
 # B. Runner and Customer Experience
 
 -- 1.How many runners signed up for each 1 week period? (i.e. week starts 2021-01-01)
+select count(runner_id),weekofyear(registration_date) as week_year
+from runners
+group by week_year
+order by week_year;
+
 -- 2.What was the average time in minutes it took for each runner to arrive at the Pizza Runner HQ to pickup the order?
+select runner_id, avg(duration) as pick_up_time
+from runner_orders
+where cancellation is null
+group by runner_id;
+
 -- 3.Is there any relationship between the number of pizzas and how long the order takes to prepare?
+#pickuptime ordertime numberofpizzas
+
+
+SELECT 
+--     COUNT(co.order_id) AS number_of_pizzas,
+--     AVG(orn.duration) AS average_preparation_time
+-- FROM 
+--     customer_orders co
+-- JOIN 
+--     runner_orders as orn ON co.order_id = orn.order_id
+-- GROUP BY 
+--     number_of_pizzas;
+    
+
+
+
+
+
 -- 4.What was the average distance travelled for each customer?
 -- 5.What was the difference between the longest and shortest delivery times for all orders?
 -- 6.What was the average speed for each runner for each delivery and do you notice any trend for these values?
