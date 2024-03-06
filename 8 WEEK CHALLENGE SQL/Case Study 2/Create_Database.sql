@@ -66,6 +66,8 @@ VALUES
   ('8', '2', '2020-01-10 00:15:02', '23.4 km', '15 minute', 'null'),
   ('9', '2', 'null', 'null', 'null', 'Customer Cancellation'),
   ('10', '1', '2020-01-11 18:50:20', '10km', '10minutes', 'null');
+  
+
 
 
 DROP TABLE IF EXISTS pizza_names;

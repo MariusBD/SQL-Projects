@@ -110,26 +110,20 @@ group by week_year
 order by week_year;
 
 -- 2.What was the average time in minutes it took for each runner to arrive at the Pizza Runner HQ to pickup the order?
-select runner_id, avg(duration) as pick_up_time
-from runner_orders
-where cancellation is null
-group by runner_id;
+
+select runner_id, avg(TIMESTAMPDIFF(MINUTE, order_time, pickup_time)) as avg_time_pickup
+from runner_orders as ro
+inner join customer_orders as co
+	on ro.order_id = co.order_id
+where duration is not null
+group by runner_id
+order by avg_time_pickup asc;
 
 -- 3.Is there any relationship between the number of pizzas and how long the order takes to prepare?
 #pickuptime ordertime numberofpizzas
 
 
-SELECT 
---     COUNT(co.order_id) AS number_of_pizzas,
---     AVG(orn.duration) AS average_preparation_time
--- FROM 
---     customer_orders co
--- JOIN 
---     runner_orders as orn ON co.order_id = orn.order_id
--- GROUP BY 
---     number_of_pizzas;
     
-
 
 
 

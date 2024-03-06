@@ -84,18 +84,18 @@ select * from runner_orders;
 
 
 -- Convertir la columna pickup_time  a tipo de datos timestamp without time zone
-ALTER TABLE runner_orders
-ADD COLUMN pick_up_notz DATE;
+-- ALTER TABLE runner_orders
+-- ADD COLUMN pick_up_notz DATE;
 
 
-UPDATE runner_orders
-SET pick_up_notz = DATE(pickup_time);
+-- UPDATE runner_orders
+-- SET pick_up_notz = DATE(pickup_time);
 
-ALTER TABLE runner_orders
-DROP COLUMN pickup_time;
+-- ALTER TABLE runner_orders
+-- DROP COLUMN pickup_time;
 
-ALTER TABLE runner_orders
-CHANGE COLUMN pick_up_notz pickup_time DATE;
+-- ALTER TABLE runner_orders
+-- CHANGE COLUMN pick_up_notz pickup_time DATE;
 
 #Comprobamos
 select * from runner_orders;
