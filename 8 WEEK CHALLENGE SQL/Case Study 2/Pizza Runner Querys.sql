@@ -121,17 +121,47 @@ order by avg_time_pickup asc;
 
 -- 3.Is there any relationship between the number of pizzas and how long the order takes to prepare?
 #pickuptime ordertime numberofpizzas
-
-
-    
-
-
+with cte as(
+	SELECT co.order_id, 
+	count(pizza_id) as number_of_pizzas,
+	max(TIMESTAMPDIFF(MINUTE,order_time,pickup_time)) as prep_time
+	from runner_orders as ro
+	inner join customer_orders as co
+		on ro.order_id = co.order_id
+	where pickup_time is not null
+	group by order_id)
+SELECT
+number_of_pizzas,
+avg(prep_time) as avg_prep_time
+from CTE
+group by number_of_pizzas;
 
 
 -- 4.What was the average distance travelled for each customer?
+select customer_id, avg(distance) as distnace_x_runner
+from runner_orders as ro
+inner join customer_orders as co
+	on ro.order_id = co.order_id
+where cancellation is null
+group by customer_id;
+
+
 -- 5.What was the difference between the longest and shortest delivery times for all orders?
+
+
+select max(duration) - min(duration) as time_diff_delivery
+from runner_orders
+where duration is not null;
+
+
 -- 6.What was the average speed for each runner for each delivery and do you notice any trend for these values?
--- 7.What is the successful delivery percentage for each runner?
+
+select runner_id, order_id, avg(round((distance /duration),2)) as speed
+from runner_orders
+where duration is not null
+group by runner_id, order_id
+order by speed;
+
 
 -- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # C. Ingredient Optimisation
