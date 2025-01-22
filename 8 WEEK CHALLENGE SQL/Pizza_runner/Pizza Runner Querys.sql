@@ -167,6 +167,7 @@ order by speed;
 # C. Ingredient Optimisation
 
 -- 1.What are the standard ingredients for each pizza?
+use pizza_runner;
 
 -- 2.What was the most commonly added extra?
 
